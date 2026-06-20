@@ -1,13 +1,13 @@
 // ==============================================
 // СВАДЕБНЫЙ САЙТ - ФРОНТЕНД
-// Мария & Алексей | 15.09.2024
+// Глеб & Лилия | 06.08.2026
 // ==============================================
 
 // Конфигурация
 const CONFIG = {
-    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw3mQQ9vOq-hQY__dD84Kemg4VBCmgtQOrby87ZRVX2S7Du7OzEMUccZ5moxJC7wHipGQ/exec', // ЗАМЕНИТЕ НА ВАШ URL
-    TELEGRAM_CHAT_URL: 'https://t.выоy', // ЗАМЕНИТЕ НА ВАШУ ССЫЛКУ НА ЧАТ
-    WEDDING_DATE: '2026-08-06T11:20:00' // Дата свадьбы
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw3mQQ9vOq-hQY__dD84Kemg4VBCmgtQOrby87ZRVX2S7Du7OzEMUccZ5moxJC7wHipGQ/exec',
+    TELEGRAM_CHAT_URL: 'https://t.выоy',
+    WEDDING_DATE: '2026-08-06T11:20:00'
 };
 
 // Прелоадер
@@ -18,11 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
         loader.style.visibility = 'hidden';
     }, 800);
     
-    // Инициализация
     initTelegramLink();
 });
 
-// Таймер обратного отсчета
+// Таймер
 function updateCountdown() {
     const weddingDate = new Date(CONFIG.WEDDING_DATE).getTime();
     const now = new Date().getTime();
@@ -36,22 +35,16 @@ function updateCountdown() {
         return;
     }
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById('days').innerText = days.toString().padStart(2, '0');
-    document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
-    document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
-    document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+    document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+    document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+    document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+    document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 }
 
-// Запускаем таймер
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-// Управление количеством гостей
+// Количество гостей
 const guestsInput = document.getElementById('guests');
 const minusBtn = document.querySelector('.minus-btn');
 const plusBtn = document.querySelector('.plus-btn');
@@ -80,7 +73,7 @@ if (minusBtn && plusBtn) {
     });
 }
 
-// Настройка ссылки на Telegram чат
+// Telegram
 function initTelegramLink() {
     const chatLink = document.querySelector('.chat-link');
     if (chatLink && CONFIG.TELEGRAM_CHAT_URL) {
@@ -90,13 +83,12 @@ function initTelegramLink() {
     }
 }
 
-// Обработка формы RSVP
+// ===== ОБРАБОТКА ФОРМЫ RSVP =====
 const rsvpForm = document.getElementById('rsvp-form');
 if (rsvpForm) {
     rsvpForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Валидация
         const attendanceSelected = document.querySelector('input[name="attendance"]:checked');
         if (!attendanceSelected) {
             showError('Пожалуйста, выберите, сможете ли вы прийти');
@@ -118,87 +110,82 @@ if (rsvpForm) {
             return;
         }
         
-        // Подготовка данных
+        // АЛКОГОЛЬ
+        const alcoholCheckboxes = document.querySelectorAll('input[name="alcohol"]:checked');
+        const alcoholPreferences = Array.from(alcoholCheckboxes).map(cb => cb.value);
+        
+        const alcoholCustom = document.getElementById('alcohol_custom');
+        if (alcoholCustom && alcoholCustom.value.trim()) {
+            alcoholPreferences.push(`свой вариант: ${alcoholCustom.value.trim()}`);
+        }
+        
         const formData = {
             name: name,
             contact: contact,
             attendance: attendanceSelected.value,
-            guests: document.getElementById('guests').value,
-            message: document.getElementById('message').value.trim() || ''
+            guests: document.getElementById('guests')?.value || 1,
+            message: document.getElementById('message')?.value.trim() || '',
+            alcohol: alcoholPreferences.length ? alcoholPreferences.join(', ') : 'не указано'
         };
         
-        // Отправка
         await submitRSVP(formData);
     });
 }
 
-// Функция отправки данных
+// Отправка
 async function submitRSVP(formData) {
     const submitBtn = document.querySelector('.submit-btn');
     const originalContent = submitBtn.innerHTML;
     
-    // Показываем индикатор загрузки
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Отправка...</span>';
     submitBtn.disabled = true;
     
     try {
-        // Создаем FormData для отправки
         const data = new URLSearchParams();
         data.append('name', formData.name);
         data.append('contact', formData.contact);
         data.append('attendance', formData.attendance);
         data.append('guests', formData.guests);
         data.append('message', formData.message);
+        data.append('alcohol', formData.alcohol);
         
-        // Отправляем запрос
-        const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+        await fetch(CONFIG.APPS_SCRIPT_URL, {
             method: 'POST',
             body: data,
             mode: 'no-cors'
         });
         
-        // Успешная отправка
         showSuccess(formData.name);
         
     } catch (error) {
         console.error('Ошибка отправки:', error);
-        showSuccess(formData.name); // Показываем успех даже при ошибке (fallback)
+        showSuccess(formData.name);
     } finally {
-        // Восстанавливаем кнопку
         submitBtn.innerHTML = originalContent;
         submitBtn.disabled = false;
     }
 }
 
-// Показать сообщение об успехе
+// Успех
 function showSuccess(guestName) {
     const form = document.getElementById('rsvp-form');
     const successMessage = document.getElementById('success-message');
     
-    // Персонализируем сообщение
     const successTitle = successMessage.querySelector('h3');
     const successText = successMessage.querySelector('p');
     
     successTitle.textContent = `Спасибо, ${guestName}!`;
     successText.textContent = 'Ваш ответ успешно отправлен! Мы будем с нетерпением ждать встречи на нашей свадьбе.';
     
-    // Показываем/скрываем
     form.style.display = 'none';
     successMessage.style.display = 'block';
-    
-    // Прокручиваем к сообщению
     successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Скрываем клавиатуру
     document.activeElement.blur();
-    
-    // Вибрация
     if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
 }
 
-// Показать ошибку
+// Ошибка
 function showError(message) {
-    // Создаем элемент ошибки
     let errorDiv = document.querySelector('.form-error');
     
     if (!errorDiv) {
@@ -228,7 +215,6 @@ function showError(message) {
     
     errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
     
-    // Автоудаление через 5 секунд
     setTimeout(() => {
         if (errorDiv && errorDiv.parentNode) {
             errorDiv.style.opacity = '0';
@@ -241,33 +227,25 @@ function showError(message) {
         }
     }, 5000);
     
-    // Вибрация
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 }
 
-// Кнопка "Заполнить ещё один ответ"
+// Новая кнопка
 const newResponseBtn = document.getElementById('new-response');
 if (newResponseBtn) {
     newResponseBtn.addEventListener('click', function() {
         const form = document.getElementById('rsvp-form');
         const successMessage = document.getElementById('success-message');
         
-        // Сбрасываем форму
         form.reset();
-        guestsInput.value = 1;
+        if (guestsInput) guestsInput.value = 1;
         
-        // Удаляем сообщения об ошибках
         const errors = document.querySelectorAll('.form-error');
         errors.forEach(error => error.remove());
         
-        // Показываем форму
         successMessage.style.display = 'none';
         form.style.display = 'block';
-        
-        // Прокручиваем к форме
         form.scrollIntoView({ behavior: 'smooth' });
-        
-        // Фокус на первое поле
         document.getElementById('name').focus();
     });
 }
@@ -277,7 +255,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
         if (href === '#') return;
-        
         e.preventDefault();
         const targetElement = document.querySelector(href);
         if (targetElement) {
@@ -289,14 +266,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Анимация появления элементов
+// Анимация
 function animateOnScroll() {
     const elements = document.querySelectorAll('.timeline-item');
     const windowHeight = window.innerHeight;
     
     elements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
-        
         if (elementTop < windowHeight - 100) {
             element.style.opacity = '1';
             element.style.transform = 'translateY(0)';
@@ -307,7 +283,7 @@ function animateOnScroll() {
 window.addEventListener('scroll', animateOnScroll);
 window.addEventListener('load', animateOnScroll);
 
-// Предотвращение двойного тапа для масштабирования
+// Предотвращение двойного тапа
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function(event) {
     const now = Date.now();
@@ -316,17 +292,6 @@ document.addEventListener('touchend', function(event) {
     }
     lastTouchEnd = now;
 }, false);
-
-// Улучшение UX для iOS
-// if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-//     document.addEventListener('focus', function(e) {
-//         if (e.target.matches('input, textarea, select')) {
-//             setTimeout(() => {
-//                 e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//             }, 300);
-//         }
-//     }, true);
-// }
 
 // Анимация иконок
 document.querySelectorAll('.icon-circle').forEach(icon => {
@@ -342,25 +307,22 @@ document.querySelectorAll('.icon-circle').forEach(icon => {
     });
 });
 
-// Добавляем CSS для анимаций
+// CSS
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    
     .fa-spinner {
         animation: spin 1s linear infinite;
     }
-    
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
 `;
 document.head.appendChild(style);
-
 
 // ===== ГАЛЕРЕЯ =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -372,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!track) return;
 
-    // Обновление активной точки при прокрутке
     function updateActiveDot() {
         const slides = track.querySelectorAll('.gallery-slide');
         const slideWidth = slides[0]?.offsetWidth || 0;
@@ -393,7 +354,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Прокрутка к слайду
     function scrollToSlide(index) {
         const slides = track.querySelectorAll('.gallery-slide');
         if (slides[index]) {
@@ -405,7 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Клик по точкам
     dots.forEach((dot, index) => {
         dot.addEventListener('click', function(e) {
             e.preventDefault();
@@ -418,14 +377,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { passive: false });
     });
 
-    // Обновление точек при скролле
     let scrollTimeout;
     track.addEventListener('scroll', function() {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(updateActiveDot, 10);
     });
 
-    // Drag to scroll (десктоп)
     track.addEventListener('mousedown', function(e) {
         isDragging = true;
         startX = e.pageX - track.offsetLeft;
@@ -451,10 +408,8 @@ document.addEventListener('DOMContentLoaded', function() {
         track.scrollLeft = scrollLeft - walk;
     });
 
-    // Инициализация
     setTimeout(updateActiveDot, 100);
 
-    // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimeout);
@@ -462,10 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
-// ==============================================
-// МУЗЫКА НА САЙТЕ (как в том сайте)
-// ==============================================
+// ===== МУЗЫКА =====
 function initMusic() {
     const musicBtn = document.getElementById('musicBtn');
     const audio = new Audio();
@@ -480,7 +432,7 @@ function initMusic() {
             await audio.play();
             isPlaying = true;
             musicBtn.classList.add('playing');
-            musicBtn.innerHTML = '<i class="fas fa-music"></i><span class="music-text">Включить музыку</span>';
+            musicBtn.innerHTML = '<i class="fas fa-music"></i><span class="music-text">Музыка играет</span>';
         } catch (error) {
             console.log('Автовоспроизведение заблокировано');
             isPlaying = false;
@@ -507,7 +459,6 @@ function initMusic() {
     });
 }
 
-// Запуск музыки
 document.addEventListener('DOMContentLoaded', function() {
     initMusic();
 });
