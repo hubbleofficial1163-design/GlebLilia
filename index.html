@@ -287,9 +287,9 @@
                     <div class="gallery-slide">
                         <img src="4.jpg" alt="Фото 4" loading="lazy">
                     </div>
-                    <div class="gallery-slide">
+                    <!-- <div class="gallery-slide">
                         <img src="5.jpg" alt="Фото 5" loading="lazy">
-                    </div>
+                    </div> -->
                     <div class="gallery-slide">
                         <img src="6.jpg" alt="Фото 6" loading="lazy">
                     </div>
@@ -301,7 +301,7 @@
                     <span class="dot" data-index="1"></span>
                     <span class="dot" data-index="2"></span>
                     <span class="dot" data-index="3"></span>
-                    <span class="dot" data-index="4"></span>
+                    <!-- <span class="dot" data-index="4"></span> -->
                     <!-- <span class="dot" data-index="5"></span> -->
                 </div>
             </div>
@@ -416,11 +416,30 @@
                             <span class="alcohol-text">Коньяк</span>
                         </label>
                         <label class="alcohol-option">
+                            <input type="checkbox" name="alcohol" value="rom">
+                            <span class="alcohol-text">Ром</span>
+                        </label>
+                        <label class="alcohol-option">
+                            <input type="checkbox" name="alcohol" value="viskey">
+                            <span class="alcohol-text">Виски</span>
+                        </label>
+                        <label class="alcohol-option">
                             <input type="checkbox" name="alcohol" value="non_alcoholic">
                             <span class="alcohol-text">Безалкогольные напитки</span>
                         </label>
                     </div>
+
                     <p class="alcohol-note"><i class="fas fa-info-circle"></i> Можно выбрать несколько вариантов</p>
+
+                    <div class="alcohol-custom">
+                        <label for="alcohol_custom" class="alcohol-custom-label">
+                            <i class="fas fa-pen"></i>
+                            <span>Или напишите свой вариант</span>
+                        </label>
+                        <input type="text" id="alcohol_custom" name="alcohol_custom" 
+                               placeholder="Например: шампанское, мартини, пиво..."
+                               class="alcohol-custom-input">
+                    </div>
                 </div>
                 
                 <button type="submit" class="submit-btn">
