@@ -1876,3 +1876,66 @@ footer p {
         min-width: auto;
     }
 }
+
+
+/* ===== АЛКОГОЛЬ - ПОЛЕ ДЛЯ СВОИХ ВАРИАНТОВ ===== */
+.alcohol-custom {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #e8d9c8;
+}
+
+.alcohol-custom-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #7a6a5a;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.alcohol-custom-label i {
+    color: #b89474;
+    font-size: 0.95rem;
+}
+
+.alcohol-custom-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e8d9c8;
+    border-radius: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: #5a4c3e;
+    background: #fefcf8;
+    transition: all 0.2s ease;
+}
+
+.alcohol-custom-input:focus {
+    outline: none;
+    border-color: #b89474;
+    background: white;
+}
+
+.alcohol-custom-input::placeholder {
+    color: #b8a99a;
+    font-style: italic;
+}
+
+/* Адаптивность */
+@media screen and (max-width: 480px) {
+    .alcohol-custom {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+    
+    .alcohol-custom-input {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+    
+    .alcohol-custom-label {
+        font-size: 0.9rem;
+    }
+}
