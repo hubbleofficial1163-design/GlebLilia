@@ -311,7 +311,7 @@ h1, h2, h3 {
     height: 0;
 }
 
-.firework {
+/* .firework {
     position: absolute;
     left: 33px;
     top: 75px;
@@ -324,7 +324,7 @@ h1, h2, h3 {
         0 0 0 6px rgba(212, 184, 156, 0.2),
         0 0 0 9px rgba(212, 184, 156, 0.1);
     animation: pulse 2s infinite;
-}
+} */
 
 .timeline-content {
     margin-left: 85px;
