@@ -6,8 +6,8 @@
 // Конфигурация
 const CONFIG = {
     APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbw3mQQ9vOq-hQY__dD84Kemg4VBCmgtQOrby87ZRVX2S7Du7OzEMUccZ5moxJC7wHipGQ/exec', // ЗАМЕНИТЕ НА ВАШ URL
-    TELEGRAM_CHAT_URL: 'https://t.me/+hOTwCMbLMwI3ZDYy', // ЗАМЕНИТЕ НА ВАШУ ССЫЛКУ НА ЧАТ
-    WEDDING_DATE: '2026-06-15T15:30:00' // Дата свадьбы
+    TELEGRAM_CHAT_URL: 'https://t.выоy', // ЗАМЕНИТЕ НА ВАШУ ССЫЛКУ НА ЧАТ
+    WEDDING_DATE: '2026-08-06T11:20:00' // Дата свадьбы
 };
 
 // Прелоадер
